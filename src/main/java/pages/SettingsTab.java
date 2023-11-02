@@ -19,6 +19,11 @@ public class SettingsTab extends BasePage {
                 .getText();
     }
 
+    public String getStatus() {
+        return androidDriver.findElementByXPath("//android.widget.EditText[@resource-id='Profile:status:TextInput']")
+                .getText();
+    }
+
     public SettingsTab closeProfile() {
         androidDriver.findElementByXPath("//android.widget.TextView[@text='']").click();
         return this;
