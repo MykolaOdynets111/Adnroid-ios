@@ -1,38 +1,39 @@
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 import pages.BasePage;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-public class LoginTest extends BaseMobileTest {
+public class TestLoginAndroid extends BaseMobileTest {
     private final static String EXPECTED_PROFILE_NAME = "Mykola_Test_Kyivstar";
     private final static String EXPECTED_STATUS = "TestStatus";
 
-    private DesiredCapabilities caps = new DesiredCapabilities();
+    private DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
     private AndroidDriver<MobileElement> androidDriver;
 
     @BeforeSuite
     public void setupDeviceCapabilities() {
-        caps.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
-        caps.setCapability(MobileCapabilityType.PLATFORM_VERSION, "12");
-        caps.setCapability(MobileCapabilityType.DEVICE_NAME, "Pixel XL API 31");
-        caps.setCapability("newCommandTimeout", 20000);
+        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
+        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "12");
+        desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Pixel XL API 31");
+        desiredCapabilities.setCapability("appium:automationName", "UiAutomator2");
+        desiredCapabilities.setCapability("newCommandTimeout", 20000);
     }
 
     @BeforeMethod
     public void spinUpAndroidDriver() {
         try {
-            URL url = new URL("http://0.0.0.0:4723/wd/hub");
-            androidDriver = new AndroidDriver<>(url, caps);
+            URL url = new URL("http://0.0.0.0:4723/");
+            androidDriver = new AndroidDriver<>(url, desiredCapabilities);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -42,14 +43,15 @@ public class LoginTest extends BaseMobileTest {
 
 
     @Test(enabled = true)
-    public void testLogin()  {
+    public void testLoginAndroid() {
+        platform = "android";
         pressHomeButton(androidDriver);
         androidDriver.findElementByXPath("//android.widget.TextView[@content-desc='Staging Hubnub']").click();
-        settingsTab = basePage.openSettingsTab(androidDriver);
+        settingsTab = basePage.openSettingsTab(androidDriver, platform);
 
-        String actualProfileName = settingsTab.openProfile().getProfileName();
+        String actualProfileName = settingsTab.openProfile(platform).getProfileName(platform);
 
-        String actualStatus = settingsTab.getStatus();
+        String actualStatus = settingsTab.getStatus(platform);
 
 
         softAssert.assertTrue(actualProfileName.equals(EXPECTED_PROFILE_NAME),
@@ -60,10 +62,9 @@ public class LoginTest extends BaseMobileTest {
                 String.format("actual profile name is not equals to expected \n actual: %s, \n expected: %s",
                         actualStatus, EXPECTED_STATUS));
 
-        settingsTab.closeProfile();
-        basePage.openChatsTab(androidDriver);
+        settingsTab.closeProfile(platform);
+        basePage.openChatsTab(androidDriver, platform);
         pressHomeButton(androidDriver);
-        androidDriver.lockDevice();
         softAssert.assertAll();
     }
 
