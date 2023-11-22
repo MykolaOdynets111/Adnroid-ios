@@ -34,6 +34,7 @@ xcodebuild -allowProvisioningUpdates -project WebDriverAgent.xcodeproj -scheme W
 
 
 Run tests:
+
 Before the tests are running we need to connect physical iPhone device to the laptop and run the Android emulator
 
 1. open the new terminal window
@@ -41,15 +42,19 @@ Before the tests are running we need to connect physical iPhone device to the la
 2. go to appium-webdriveragent repo:
 
 cd /Users/mykolaodynets/.appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent
+
 3. run  WebDriverAgent for appropriate device (00008020-001C51981A05002E):
 
 xcodebuild -allowProvisioningUpdates -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=00008020-001C51981A05002E' test
+
 4. open the new terminal tab and run the Appium server:
 
 appium
+
 5. open the new terminal tab and go to autotests repo:
 
 cd /Users/mykolaodynets/Documents/dubai/untitled
+
 6. run tests:
 
 mvn clean verify
