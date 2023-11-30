@@ -1,4 +1,5 @@
 
+import com.github.javafaker.Faker;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import org.testng.annotations.BeforeSuite;
@@ -12,12 +13,11 @@ import java.util.Properties;
 
 public class BaseMobileTest {
     protected SoftAssert softAssert = new SoftAssert();
+    protected Faker faker = new Faker();
     protected SettingsTab settingsTab;
     protected BasePage basePage;
 
-
     String configFilePath = "src/main/resources/config.properties";
-    protected Properties prop;
     String platform;
 
     @BeforeSuite
@@ -28,7 +28,7 @@ public class BaseMobileTest {
         platform = prop.getProperty("platform");
     }
 
-    public void pressHomeButton(AppiumDriver<MobileElement> driver) {
+    public void pressBackButton(AppiumDriver<MobileElement> driver) {
         driver.navigate().back();
     }
 
