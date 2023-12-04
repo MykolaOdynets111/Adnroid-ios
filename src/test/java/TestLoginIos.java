@@ -58,7 +58,6 @@ public class TestLoginIos extends BaseMobileTest {
         String actualProfileName = settingsTab.openProfile(platform).getProfileName(platform);
         String actualStatus = settingsTab.getStatus(platform);
 
-
         softAssert.assertTrue(actualProfileName.equals(EXPECTED_PROFILE_NAME),
                 String.format("actual profile name is not equals to expected \n actual: %s, \n expected: %s",
                         actualProfileName, EXPECTED_PROFILE_NAME));
@@ -69,7 +68,7 @@ public class TestLoginIos extends BaseMobileTest {
 
         settingsTab.closeProfile(platform);
         basePage.openChatsTab(driver, platform);
-        pressHomeButton(driver);
+        pressBackButton(driver);
         softAssert.assertAll();
     }
 

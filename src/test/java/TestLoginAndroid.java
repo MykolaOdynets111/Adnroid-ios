@@ -23,8 +23,8 @@ public class TestLoginAndroid extends BaseMobileTest {
     @BeforeSuite
     public void setupDeviceCapabilities() {
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
-        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "12");
-        desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Pixel XL API 31");
+        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "11");
+        desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Pixel_6_Test");
         desiredCapabilities.setCapability("appium:automationName", "UiAutomator2");
         desiredCapabilities.setCapability("newCommandTimeout", 20000);
     }
@@ -45,14 +45,13 @@ public class TestLoginAndroid extends BaseMobileTest {
     @Test(enabled = true)
     public void testLoginAndroid() {
         platform = "android";
-        pressHomeButton(androidDriver);
+        pressBackButton(androidDriver);
         androidDriver.findElementByXPath("//android.widget.TextView[@content-desc='Staging Hubnub']").click();
         settingsTab = basePage.openSettingsTab(androidDriver, platform);
 
         String actualProfileName = settingsTab.openProfile(platform).getProfileName(platform);
 
         String actualStatus = settingsTab.getStatus(platform);
-
 
         softAssert.assertTrue(actualProfileName.equals(EXPECTED_PROFILE_NAME),
                 String.format("actual profile name is not equals to expected \n actual: %s, \n expected: %s",
@@ -64,7 +63,7 @@ public class TestLoginAndroid extends BaseMobileTest {
 
         settingsTab.closeProfile(platform);
         basePage.openChatsTab(androidDriver, platform);
-        pressHomeButton(androidDriver);
+        pressBackButton(androidDriver);
         softAssert.assertAll();
     }
 

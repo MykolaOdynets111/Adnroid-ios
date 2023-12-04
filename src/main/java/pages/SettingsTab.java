@@ -15,7 +15,7 @@ public class SettingsTab extends BasePage {
             driver.findElementByName("Settings:contactAvatar").click();
         }
         if (isPlatformAndroid(platform)) {
-            driver.findElementByXPath("//android.widget.TextView[@resource-id='Settings:status']").click();
+            driver.findElementByXPath("//*[@resource-id='Settings:contactAvatar']").click();
         }
         return this;
     }
@@ -28,7 +28,7 @@ public class SettingsTab extends BasePage {
             return
                     driver.findElementByAccessibilityId("Profile:name:TextInput").getText();
         } else {
-            return "please, set the correct platform";
+            return "wrong platform";
         }
     }
 

@@ -3,7 +3,11 @@ package pages;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 
+import java.util.logging.Logger;
+
 public class BasePage {
+
+    protected Logger logger = Logger.getLogger(BasePage.class.getName());
 
     protected AppiumDriver<MobileElement> driver;
 
