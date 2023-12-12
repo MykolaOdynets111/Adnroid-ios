@@ -22,7 +22,7 @@ public class TestLoginAndroid extends BaseMobileTest {
 
     @BeforeSuite
     public void setupDeviceCapabilities() {
-        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
+        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "11");
         desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Pixel_6_Test");
         desiredCapabilities.setCapability("appium:automationName", "UiAutomator2");
@@ -32,7 +32,7 @@ public class TestLoginAndroid extends BaseMobileTest {
     @BeforeMethod
     public void spinUpAndroidDriver() {
         try {
-            URL url = new URL("http://0.0.0.0:4723/");
+            URL url = new URL("http://0.0.0.0:4733/");
             androidDriver = new AndroidDriver<>(url, desiredCapabilities);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -44,14 +44,13 @@ public class TestLoginAndroid extends BaseMobileTest {
 
     @Test(enabled = true)
     public void testLoginAndroid() {
-        platform = "android";
         pressBackButton(androidDriver);
         androidDriver.findElementByXPath("//android.widget.TextView[@content-desc='Staging Hubnub']").click();
-        settingsTab = basePage.openSettingsTab(androidDriver, platform);
+        settingsTab = basePage.openSettingsTab(androidDriver);
 
-        String actualProfileName = settingsTab.openProfile(platform).getProfileName(platform);
+        String actualProfileName = settingsTab.openProfile().getProfileName();
 
-        String actualStatus = settingsTab.getStatus(platform);
+        String actualStatus = settingsTab.getStatus();
 
         softAssert.assertTrue(actualProfileName.equals(EXPECTED_PROFILE_NAME),
                 String.format("actual profile name is not equals to expected \n actual: %s, \n expected: %s",
@@ -61,8 +60,8 @@ public class TestLoginAndroid extends BaseMobileTest {
                 String.format("actual profile name is not equals to expected \n actual: %s, \n expected: %s",
                         actualStatus, EXPECTED_STATUS));
 
-        settingsTab.closeProfile(platform);
-        basePage.openChatsTab(androidDriver, platform);
+        settingsTab.closeProfile();
+        basePage.openChatsTab(androidDriver);
         pressBackButton(androidDriver);
         softAssert.assertAll();
     }

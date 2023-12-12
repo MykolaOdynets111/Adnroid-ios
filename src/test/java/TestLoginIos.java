@@ -24,7 +24,7 @@ public class TestLoginIos extends BaseMobileTest {
     @BeforeSuite
     public void setupDeviceCapabilities() {
 
-        desiredCapabilities.setCapability("platformName", "iOS");
+        desiredCapabilities.setCapability("platformName", "ios");
         desiredCapabilities.setCapability("appium:automationName", "xcuitest");
         desiredCapabilities.setCapability("appium:udid", "00008020-001C51981A05002E");
         desiredCapabilities.setCapability("appium:bundleId", "staging.hubnub.io");
@@ -36,7 +36,6 @@ public class TestLoginIos extends BaseMobileTest {
         desiredCapabilities.setCapability("appium:newCommandTimeout", 3600);
         desiredCapabilities.setCapability("appium:connectHardwareKeyboard", true);
     }
-
 
     @BeforeMethod
     public void spinUpIosDriver() {
@@ -50,13 +49,11 @@ public class TestLoginIos extends BaseMobileTest {
         basePage = new BasePage(driver);
     }
 
-
     @Test(enabled = true)
     public void testLoginIos() {
-        platform = "ios";
-        settingsTab = basePage.openSettingsTab(driver, platform);
-        String actualProfileName = settingsTab.openProfile(platform).getProfileName(platform);
-        String actualStatus = settingsTab.getStatus(platform);
+        settingsTab = basePage.openSettingsTab(driver);
+        String actualProfileName = settingsTab.openProfile().getProfileName();
+        String actualStatus = settingsTab.getStatus();
 
         softAssert.assertTrue(actualProfileName.equals(EXPECTED_PROFILE_NAME),
                 String.format("actual profile name is not equals to expected \n actual: %s, \n expected: %s",
@@ -66,8 +63,8 @@ public class TestLoginIos extends BaseMobileTest {
                 String.format("actual profile name is not equals to expected \n actual: %s, \n expected: %s",
                         actualStatus, EXPECTED_STATUS));
 
-        settingsTab.closeProfile(platform);
-        basePage.openChatsTab(driver, platform);
+        settingsTab.closeProfile();
+        basePage.openChatsTab(driver);
         pressBackButton(driver);
         softAssert.assertAll();
     }

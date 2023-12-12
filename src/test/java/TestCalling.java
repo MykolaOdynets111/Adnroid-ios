@@ -2,6 +2,8 @@
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -9,21 +11,22 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+import pages.ActiveCall;
 import pages.BasePage;
-import pages.ChatWindow;
-import pages.ChatsTab;
+import pages.CallsTab;
+import pages.IncomingCall;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-public class TestMessaging extends BaseMobileTest {
+public class TestCalling extends BaseMobileTest {
     private final DesiredCapabilities iOSDesiredCapabilities = new DesiredCapabilities();
     private final DesiredCapabilities androidDesiredCapabilities = new DesiredCapabilities();
     private AppiumDriver<MobileElement> iOSDriver;
     private AppiumDriver<MobileElement> androidDriver;
     private BasePage iOSBasePage;
-    private BasePage androidBasePage;
+//    private BasePage androidBasePage;
 
     @BeforeSuite
     public void setupDeviceCapabilities() {
@@ -40,10 +43,10 @@ public class TestMessaging extends BaseMobileTest {
         iOSDesiredCapabilities.setCapability("appium:newCommandTimeout", 3600);
         iOSDesiredCapabilities.setCapability("appium:connectHardwareKeyboard", true);
 
+
         androidDesiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
         androidDesiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "11");
         androidDesiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Pixel_6_Test");
-
         androidDesiredCapabilities.setCapability("appium:applicationId", "io.shadow.chat.staging");
         androidDesiredCapabilities.setCapability("appium:appActivity", ".MainActivity");
         androidDesiredCapabilities.setCapability("appium:automationName", "UiAutomator2");
@@ -63,33 +66,25 @@ public class TestMessaging extends BaseMobileTest {
         }
         iOSDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
-        pressBackButton(androidDriver);
+        ((AndroidDriver<?>) androidDriver).pressKey(new KeyEvent(AndroidKey.HOME));
         androidDriver.findElementByXPath("//android.widget.TextView[@content-desc='Staging Hubnub']").click();
-
         iOSBasePage = new BasePage(iOSDriver);
-        androidBasePage = new BasePage(androidDriver);
-
+//        androidBasePage = new BasePage(androidDriver);
     }
 
     @Test(enabled = true)
-    public void testSendMessage() {
+    public void testCallIosToAndroid() {
 
-        String messageFromAndroidToIos = faker.name().firstName();
+        CallsTab iOSCallsTab = iOSBasePage.openCallsTab(iOSDriver);
+        iOSCallsTab.makeCallByName("Mykola_Test_Kyivstar", iOSDriver);
+        lockDevice(androidDriver);
 
-        ChatsTab androidChatsTab = androidBasePage.openChatsTab(androidDriver);
-        ChatWindow androidChat = androidChatsTab.openChatByName("Mykola_Test_Lifecell", androidDriver);
-        androidChat.sendMessage(messageFromAndroidToIos, androidDriver);
+        IncomingCall androidIncomingCall = new IncomingCall(androidDriver);
+        softAssert.assertTrue(androidIncomingCall.isCallRequested(androidDriver), "The incoming call does not occur");
 
-        ChatsTab iOSChatsTab = iOSBasePage.openChatsTab(iOSDriver);
-        ChatWindow iOSChat = iOSChatsTab.openChatByName("Mykola_Test_Kyivstar", iOSDriver);
-        softAssert.assertTrue(iOSChat.isChatContainsMessage(messageFromAndroidToIos, iOSDriver),
-                "The message from Android to IOS was not sent");
-
-        String messageFromIosToAndroid = faker.name().lastName();
-        iOSChat.sendMessage(messageFromIosToAndroid, iOSDriver);
-        softAssert.assertTrue(androidChat.isChatContainsMessage(messageFromIosToAndroid, androidDriver),
-                "The message from IOS to Android was not sent");
+        ActiveCall androidActiveCall = androidIncomingCall.answerCall(androidDriver);
+        softAssert.assertTrue(androidActiveCall.isCallInProgress(androidDriver), "The call does not start");
+        androidActiveCall.stopCall(androidDriver);
 
         softAssert.assertAll();
     }
@@ -97,7 +92,7 @@ public class TestMessaging extends BaseMobileTest {
     @AfterMethod
     public void closeDrivers() {
         pressBackButton(androidDriver);
-        pressBackButton(androidDriver);
+        pressBackButton(iOSDriver);
         iOSDriver.quit();
         androidDriver.quit();
     }
