@@ -78,7 +78,7 @@ public class BasePage {
         try {
             return driver.findElement(element).isEnabled();
         } catch (TimeoutException | NoSuchElementException e) {
-            Assert.fail(elemName + "' does not exist.");
+            Assert.fail(errorDescription(elemName));
             return false;
         }
     }
@@ -87,7 +87,7 @@ public class BasePage {
         try {
             return driver.findElement(element).getText();
         } catch (TimeoutException | NoSuchElementException e) {
-            Assert.fail(elemName + "' does not exist.");
+            Assert.fail(errorDescription(elemName));
             return null;
         }
     }
@@ -95,17 +95,20 @@ public class BasePage {
     protected void clickLastElementBy(MobileDriver<MobileElement> driver, By element, String elemName) {
         try {
             List<MobileElement> elementsList = driver.findElements(element);
-            elementsList.get(elementsList.size() - 1).click();
-        } catch (TimeoutException | NoSuchElementException e) {
-            Assert.fail(elemName + "' does not exist.");
+            elementsList.get(elementsList.size()-1).click();
+        } catch (TimeoutException | NoSuchElementException |IndexOutOfBoundsException e) {
+            Assert.fail(errorDescription(elemName));
         }
     }
-
     protected boolean isPlatformAndroid(AppiumDriver<MobileElement> driver) {
         return Objects.requireNonNull(driver.getPlatformName()).equalsIgnoreCase("Android");
     }
 
     protected boolean isPlatformIos(AppiumDriver<MobileElement> driver) {
         return Objects.requireNonNull(driver.getPlatformName()).equalsIgnoreCase("IOS");
+    }
+
+    private String errorDescription(String elemName){
+        return elemName + "' does not exist.";
     }
 }

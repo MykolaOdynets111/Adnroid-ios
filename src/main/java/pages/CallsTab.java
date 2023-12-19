@@ -13,8 +13,9 @@ public class CallsTab extends BasePage {
         super(driver);
     }
 
-    public void makeCallByName(String name, AppiumDriver<MobileElement> driver) {
+    public void makeCallByName(String name, AppiumDriver<MobileElement> driver) throws InterruptedException {
         if (isPlatformAndroid(driver)) {
+            Thread.sleep(1000);
             clickLastElementBy(driver, By.xpath(String.format(ANDROID_ABONENT_NAME, name)), "Name: " + name);
         }
         if (isPlatformIos(driver)) {
