@@ -11,11 +11,11 @@ public class TestMessaging extends BaseMobileTest {
         String messageFromAndroidToIos = faker.name().firstName();
 
         ChatsTab androidChatsTab = androidBasePage.openChatsTab(androidDriver);
-        ChatWindow androidChat = androidChatsTab.openChatByName("Mykola_Test_Lifecell", androidDriver);
+        ChatWindow androidChat = androidChatsTab.openChatByName(iosConsumerName, androidDriver);
         androidChat.sendMessage(messageFromAndroidToIos, androidDriver);
 
         ChatsTab iOSChatsTab = iOSBasePage.openChatsTab(iOSDriver);
-        ChatWindow iOSChat = iOSChatsTab.openChatByName("Mykola_Test_Kyivstar", iOSDriver);
+        ChatWindow iOSChat = iOSChatsTab.openChatByName(androidConsumerName, iOSDriver);
         softAssert.assertTrue(iOSChat.isChatContainsMessage(messageFromAndroidToIos, iOSDriver),
                 "The message from Android to IOS was not sent");
 

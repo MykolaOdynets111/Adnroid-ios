@@ -6,18 +6,18 @@ import pages.IncomingCall;
 
 public class TestCalling extends BaseMobileTest {
 
-    @Test(enabled = true) //working fine
+    @Test(enabled = true)
     public void testCallIosToAndroid() throws InterruptedException {
 
         CallsTab iOSCallsTab = iOSBasePage.openCallsTab(iOSDriver);
-        iOSCallsTab.makeCallByName("Mykola_Test_Kyivstar", iOSDriver);
+        iOSCallsTab.makeCallByName(androidConsumerName, iOSDriver);
         lockDevice(androidDriver);
 
         IncomingCall androidIncomingCall = new IncomingCall(androidDriver);
-        softAssert.assertTrue(androidIncomingCall.isCallRequested(androidDriver, "Mykola_Test_Lifecell"), "The incoming call does not occur");
+        softAssert.assertTrue(androidIncomingCall.isCallRequested(androidDriver, iosConsumerName), "The incoming call does not occur.");
 
         ActiveCall androidActiveCall = androidIncomingCall.answerCall(androidDriver);
-        softAssert.assertTrue(androidActiveCall.isCallInProgress(androidDriver, "Mykola_Test_Lifecell"), "The call does not start");
+        softAssert.assertTrue(androidActiveCall.isCallInProgress(androidDriver, iosConsumerName), "The call does not start.");
         androidActiveCall.stopCall(androidDriver);
 
         softAssert.assertAll();
@@ -25,12 +25,12 @@ public class TestCalling extends BaseMobileTest {
     @Test(enabled = true)
     public void testCallAndroidToIOS() throws InterruptedException {
         CallsTab androidCallsTab = androidBasePage.openCallsTab(androidDriver);
-        androidCallsTab.makeCallByName("Mykola_Test_Lifecell", androidDriver);
+        androidCallsTab.makeCallByName(iosConsumerName, androidDriver);
         IncomingCall iosIncomingCall = new IncomingCall(iOSDriver);
-        softAssert.assertTrue(iosIncomingCall.isCallRequested(iOSDriver, "Mykola_Test_Kyivstar"), "The incoming call does not show");
+        softAssert.assertTrue(iosIncomingCall.isCallRequested(iOSDriver, androidConsumerName), "The incoming call does not show");
 
         ActiveCall iosActiveCall = iosIncomingCall.answerCall(iOSDriver);
-        softAssert.assertTrue(iosActiveCall.isCallInProgress(iOSDriver, "Mykola_Test_Kyivstar"), "The call does not start");
+        softAssert.assertTrue(iosActiveCall.isCallInProgress(iOSDriver, androidConsumerName), "The call does not start");
 
 
         iosActiveCall.stopCall(iOSDriver);

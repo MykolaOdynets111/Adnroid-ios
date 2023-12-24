@@ -109,6 +109,6 @@ public class BasePage {
     }
 
     private String errorDescription(String elemName){
-        return elemName + "' does not exist.";
+        return "'" + elemName + "' does not exist.";
     }
 }

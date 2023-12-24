@@ -9,7 +9,6 @@ public class ChatsTab extends BasePage {
     private static final String ANDROID_CHAT_NAME = "//android.widget.TextView[@text='%s']";
     private static final String IOS_CHAT_NAME = "//XCUIElementTypeOther[starts-with(@name,'%s')]";
 
-
     public ChatsTab(AppiumDriver<MobileElement> driver) {
         super(driver);
     }

@@ -13,14 +13,14 @@ public class ActiveCall extends BasePage {
     private static final By ANDROID_SPEAKER_BTN = By.xpath("//android.widget.ImageView[@resource-id='io.shadow.chat.staging:id/speakerButton']");
     private static final By ANDROID_TIMER = By.xpath("//android.widget.TextView[@resource-id='io.shadow.chat.staging:id/tvInfo']");
     private static final By ANDROID_STOP_CALL_BTN = By.xpath("//android.widget.ImageView[@resource-id='io.shadow.chat.staging:id/ivDeclineCall']");
-    private static final String IOS_ABONENT_NAME = "//XCUIElementTypeOther[contains(@name, '%s Hubnub Call')]";
+    private static final String IOS_CONSUMER_NAME = "//XCUIElementTypeOther[contains(@name, '%s Hubnub Call')]";
 
 
     public ActiveCall(AppiumDriver<MobileElement> driver) {
         super(driver);
     }
 
-    public boolean isCallInProgress(AppiumDriver<MobileElement> driver, String incomingAbonentName) {
+    public boolean isCallInProgress(AppiumDriver<MobileElement> driver, String incomingConsumerName) {
         boolean isCallInProgress = false;
         if (isPlatformAndroid(driver)) {
             isCallInProgress = isElemEnabledBy(driver, ANDROID_MUTE_BTN, "mute button") &&
@@ -29,7 +29,7 @@ public class ActiveCall extends BasePage {
                     isElemEnabledBy(driver, ANDROID_STOP_CALL_BTN, " stop button");
         }
         if (isPlatformIos(driver)) {
-            isCallInProgress = isElemEnabledBy(driver, By.xpath(String.format(IOS_ABONENT_NAME, incomingAbonentName)), "incoming abonents name");
+            isCallInProgress = isElemEnabledBy(driver, By.xpath(String.format(IOS_CONSUMER_NAME, incomingConsumerName)), "incoming consumer's name");
         }
         return isCallInProgress;
     }

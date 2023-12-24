@@ -12,7 +12,7 @@ public class IncomingCall extends BasePage {
     private static final By ANDROID_ACCEPT_BTN = By.xpath("//android.widget.ImageView[@resource-id='io.shadow.chat.staging:id/ivAcceptCall']");
     private static final By ANDROID_DECLINE_BTN = By.xpath("//android.widget.ImageView[@resource-id='io.shadow.chat.staging:id/ivDeclineCall']");
     private static final By ANDROID_AVATAR = By.xpath("//android.widget.ImageView[@resource-id='io.shadow.chat.staging:id/imageView2']");
-    private static final String IOS_INCOMING_ABONENT_NAME_XPATH = "//XCUIElementTypeOther[starts-with(@name,'%s')]";
+    private static final String IOS_INCOMING_CONSUMER_NAME_XPATH = "//XCUIElementTypeOther[starts-with(@name,'%s')]";
     private static final String ANSWER_BTN = "Answer call";
 
     public IncomingCall(AppiumDriver<MobileElement> driver) {
@@ -32,10 +32,10 @@ public class IncomingCall extends BasePage {
         return new ActiveCall(driver);
     }
 
-    public boolean isCallRequested(AppiumDriver<MobileElement> driver, String incomingAbonentName) {
+    public boolean isCallRequested(AppiumDriver<MobileElement> driver, String incomingConsumerName) {
         boolean isActive = false;
         if (isPlatformIos(driver)) {
-            isActive = isElemEnabledBy(driver, By.xpath(String.format(IOS_INCOMING_ABONENT_NAME_XPATH, incomingAbonentName)), "abonent name");
+            isActive = isElemEnabledBy(driver, By.xpath(String.format(IOS_INCOMING_CONSUMER_NAME_XPATH, incomingConsumerName)), "consumer name");
         }
         if (isPlatformAndroid(driver)) {
             isActive = isElemEnabledBy(driver, ANDROID_DECLINE_BTN, "Decline call") &&

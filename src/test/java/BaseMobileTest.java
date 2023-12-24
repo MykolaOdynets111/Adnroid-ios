@@ -7,20 +7,19 @@ import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
-import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 import org.testng.asserts.SoftAssert;
 import pages.BasePage;
 import pages.SettingsTab;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class BaseMobileTest {
@@ -34,41 +33,42 @@ public class BaseMobileTest {
     protected AppiumDriver<MobileElement> androidDriver;
     protected BasePage iOSBasePage;
     protected BasePage androidBasePage;
-
+    protected String iosConsumerName;
+    protected String androidConsumerName;
+    Properties properties = new Properties();
 
     @BeforeMethod
-    public void setUpDrivers() {
+    public void setUpDrivers() throws IOException {
+        properties.load(new FileInputStream("src/main/resources/config.properties"));
 
-        iOSDesiredCapabilities.setCapability("platformName", "ios");
-        iOSDesiredCapabilities.setCapability("appium:automationName", "xcuitest");
-        iOSDesiredCapabilities.setCapability("appium:udid", "00008020-001C51981A05002E");
-        iOSDesiredCapabilities.setCapability("appium:bundleId", "staging.hubnub.io");
-        iOSDesiredCapabilities.setCapability("appium:deviceName", "iPhone_Mykola_test");
-        iOSDesiredCapabilities.setCapability("appium:xcodeOrgId", "9S9NSPYJKN");
-        iOSDesiredCapabilities.setCapability("appium:xcodeSigningId", "Apple Developer");
-        iOSDesiredCapabilities.setCapability("appium:showXcodeLog", true);
-        iOSDesiredCapabilities.setCapability("appium:includeSafariInWebviews", true);
-        iOSDesiredCapabilities.setCapability("appium:newCommandTimeout", 3600);
-        iOSDesiredCapabilities.setCapability("appium:connectHardwareKeyboard", true);
+        iOSDesiredCapabilities.setCapability("platformName", properties.get("ios.platform.name"));
+        iOSDesiredCapabilities.setCapability("appium:automationName", properties.get("ios.automation.name"));
+        iOSDesiredCapabilities.setCapability("appium:udid", properties.get("ios.phone.udid"));
+        iOSDesiredCapabilities.setCapability("appium:bundleId", properties.get("ios.bundle.id"));
+        iOSDesiredCapabilities.setCapability("appium:deviceName", properties.get("ios.device.name"));
+        iOSDesiredCapabilities.setCapability("appium:xcodeOrgId", properties.get("ios.xcode.org.id"));
+        iOSDesiredCapabilities.setCapability("appium:xcodeSigningId", properties.get("ios.xcode.signing.id"));
+        iOSDesiredCapabilities.setCapability("appium:newCommandTimeout", properties.get("ios.new.command.timeout"));
+        iOSDesiredCapabilities.setCapability("appium:connectHardwareKeyboard", properties.get("ios.connect.hardware.keyboard"));
 
-
-        androidDesiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
-        androidDesiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "11");
-        androidDesiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Pixel_6_pro");
-        androidDesiredCapabilities.setCapability("appium:applicationId", "io.shadow.chat.staging");
-        androidDesiredCapabilities.setCapability("appium:appActivity", ".MainActivity");
-        androidDesiredCapabilities.setCapability("appium:automationName", "UiAutomator2");
-        androidDesiredCapabilities.setCapability("newCommandTimeout", 20000);
+        androidDesiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, properties.get("android.platform.name"));
+        androidDesiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, properties.get("android.platform.version"));
+        androidDesiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, properties.get("android.device.name"));
+        androidDesiredCapabilities.setCapability("appium:applicationId", properties.get("android.application.id"));
+        androidDesiredCapabilities.setCapability("appium:appActivity", properties.get("android.application.activity"));
+        androidDesiredCapabilities.setCapability("appium:automationName", properties.get("android.automation.name"));
+        androidDesiredCapabilities.setCapability("newCommandTimeout", properties.get("android.new.command.timeout"));
 
         try {
-            URL iosUrl = new URL("http://127.0.0.1:4723");
+            URL iosUrl = new URL((String) properties.get("ios.url"));
             iOSDriver = new IOSDriver<>(iosUrl, iOSDesiredCapabilities);
-            URL androidUrl = new URL("http://0.0.0.0:4733/");
+            URL androidUrl = new URL((String) properties.get("android.url"));
             androidDriver = new AndroidDriver<>(androidUrl, androidDesiredCapabilities);
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+        iosConsumerName = (String) properties.get("ios.consumer.name");
+        androidConsumerName = (String) properties.get("android.consumer.name");
         iOSDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         ((AndroidDriver<?>) androidDriver).pressKey(new KeyEvent(AndroidKey.HOME));
@@ -89,6 +89,7 @@ public class BaseMobileTest {
     public void closeDrivers() {
         pressBackButton(androidDriver);
         pressBackButton(iOSDriver);
+        ((AndroidDriver<?>) androidDriver).pressKey(new KeyEvent(AndroidKey.HOME));
         iOSDriver.quit();
         androidDriver.quit();
     }
