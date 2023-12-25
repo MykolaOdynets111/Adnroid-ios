@@ -4,6 +4,9 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 
+import static utillities.Utilities.isPlatformAndroid;
+import static utillities.Utilities.isPlatformIos;
+
 public class CallsTab extends BasePage {
 
     private static final String ANDROID_CONSUMER_NAME = "//android.widget.TextView[@text='%s']";

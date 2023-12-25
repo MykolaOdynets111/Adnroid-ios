@@ -3,16 +3,18 @@ import com.github.javafaker.Faker;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.nativekey.AndroidKey;
-import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.openqa.selenium.By;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.asserts.SoftAssert;
 import pages.BasePage;
 import pages.SettingsTab;
+import utillities.Utilities;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,10 +25,11 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class BaseMobileTest {
+    Properties properties = new Properties();
+
     protected SoftAssert softAssert = new SoftAssert();
     protected Faker faker = new Faker();
     protected SettingsTab settingsTab;
-
     protected final DesiredCapabilities iOSDesiredCapabilities = new DesiredCapabilities();
     protected final DesiredCapabilities androidDesiredCapabilities = new DesiredCapabilities();
     protected AppiumDriver<MobileElement> iOSDriver;
@@ -35,10 +38,12 @@ public class BaseMobileTest {
     protected BasePage androidBasePage;
     protected String iosConsumerName;
     protected String androidConsumerName;
-    Properties properties = new Properties();
+
+    private URL iosUrl;
+    private URL androidUrl;
 
     @BeforeMethod
-    public void setUpDrivers() throws IOException {
+    public void setUpCapabilities() throws IOException {
         properties.load(new FileInputStream("src/main/resources/config.properties"));
 
         iOSDesiredCapabilities.setCapability("platformName", properties.get("ios.platform.name"));
@@ -60,21 +65,23 @@ public class BaseMobileTest {
         androidDesiredCapabilities.setCapability("newCommandTimeout", properties.get("android.new.command.timeout"));
 
         try {
-            URL iosUrl = new URL((String) properties.get("ios.url"));
-            iOSDriver = new IOSDriver<>(iosUrl, iOSDesiredCapabilities);
-            URL androidUrl = new URL((String) properties.get("android.url"));
-            androidDriver = new AndroidDriver<>(androidUrl, androidDesiredCapabilities);
+            iosUrl = new URL((String) properties.get("ios.url"));
+            androidUrl = new URL((String) properties.get("android.url"));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         iosConsumerName = (String) properties.get("ios.consumer.name");
         androidConsumerName = (String) properties.get("android.consumer.name");
-        iOSDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        ((AndroidDriver<?>) androidDriver).pressKey(new KeyEvent(AndroidKey.HOME));
-        androidDriver.findElementByXPath("//android.widget.TextView[@content-desc='Staging Hubnub']").click();
-        iOSBasePage = new BasePage(iOSDriver);
-        androidBasePage = new BasePage(androidDriver);
+
+    }
+
+    @BeforeMethod
+    public void setUpDrivers() {
+        androidDriver = new AndroidDriver<>(androidUrl, androidDesiredCapabilities);
+        androidDriver.terminateApp((String) properties.get("android.application.id"));
+        iOSDriver = new IOSDriver<>(iosUrl, iOSDesiredCapabilities);
+        WebDriverWait wait = new WebDriverWait(iOSDriver, 50);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//XCUIElementTypeStaticText[@name='Connected']")));
     }
 
     public void pressBackButton(AppiumDriver<MobileElement> driver) {
@@ -85,12 +92,31 @@ public class BaseMobileTest {
     public void lockDevice(AppiumDriver<MobileElement> driver) {
         ((AndroidDriver<MobileElement>) driver).lockDevice(Duration.ofSeconds(5));
     }
+
+    public void openApplication(AppiumDriver<MobileElement> driver) {
+
+        if (Utilities.isPlatformAndroid(driver)) {
+            WebDriverWait wait = new WebDriverWait(driver, 50);
+
+            androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            driver.activateApp((String) properties.get("android.application.id"));
+            //wait for application is being connected
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.widget.TextView[@text='Connected']")));
+            androidBasePage = new BasePage(driver);
+        }
+        if (Utilities.isPlatformIos(driver)) {
+            iOSDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+
+            iOSBasePage = new BasePage(driver);
+        }
+    }
+
     @AfterMethod
     public void closeDrivers() {
-        pressBackButton(androidDriver);
         pressBackButton(iOSDriver);
-        ((AndroidDriver<?>) androidDriver).pressKey(new KeyEvent(AndroidKey.HOME));
         iOSDriver.quit();
+        androidDriver.terminateApp((String) properties.get("android.application.id"));
         androidDriver.quit();
     }
 }

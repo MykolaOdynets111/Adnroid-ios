@@ -7,7 +7,8 @@ public class TestMessaging extends BaseMobileTest {
 
     @Test(enabled = true)
     public void testSendMessage() {
-
+        openApplication(androidDriver);
+        openApplication(iOSDriver);
         String messageFromAndroidToIos = faker.name().firstName();
 
         ChatsTab androidChatsTab = androidBasePage.openChatsTab(androidDriver);

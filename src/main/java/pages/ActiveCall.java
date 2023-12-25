@@ -6,6 +6,8 @@ import io.appium.java_client.TouchAction;
 import org.openqa.selenium.By;
 
 import static io.appium.java_client.touch.offset.PointOption.point;
+import static utillities.Utilities.isPlatformAndroid;
+import static utillities.Utilities.isPlatformIos;
 
 public class ActiveCall extends BasePage {
 

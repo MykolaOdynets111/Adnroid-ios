@@ -8,7 +8,8 @@ public class TestCalling extends BaseMobileTest {
 
     @Test(enabled = true)
     public void testCallIosToAndroid() throws InterruptedException {
-
+        openApplication(androidDriver);
+        openApplication(iOSDriver);
         CallsTab iOSCallsTab = iOSBasePage.openCallsTab(iOSDriver);
         iOSCallsTab.makeCallByName(androidConsumerName, iOSDriver);
         lockDevice(androidDriver);
@@ -24,6 +25,9 @@ public class TestCalling extends BaseMobileTest {
     }
     @Test(enabled = true)
     public void testCallAndroidToIOS() throws InterruptedException {
+        openApplication(androidDriver);
+        openApplication(iOSDriver);
+
         CallsTab androidCallsTab = androidBasePage.openCallsTab(androidDriver);
         androidCallsTab.makeCallByName(iosConsumerName, androidDriver);
         IncomingCall iosIncomingCall = new IncomingCall(iOSDriver);
@@ -31,7 +35,6 @@ public class TestCalling extends BaseMobileTest {
 
         ActiveCall iosActiveCall = iosIncomingCall.answerCall(iOSDriver);
         softAssert.assertTrue(iosActiveCall.isCallInProgress(iOSDriver, androidConsumerName), "The call does not start");
-
 
         iosActiveCall.stopCall(iOSDriver);
         softAssert.assertAll();

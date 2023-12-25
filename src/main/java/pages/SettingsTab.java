@@ -4,6 +4,9 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 
+import static utillities.Utilities.isPlatformAndroid;
+import static utillities.Utilities.isPlatformIos;
+
 public class SettingsTab extends BasePage {
     private static final By ANDROID_PROFILE_AVATAR = By.xpath("//*[@resource-id='Settings:contactAvatar']");
     private static final By IOS_PROFILE_AVATAR = By.name("Settings:contactAvatar");

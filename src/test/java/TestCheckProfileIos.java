@@ -5,6 +5,7 @@ public class TestCheckProfileIos extends BaseMobileTest {
 
     @Test(enabled = true)
     public void testProfileIos() {
+        openApplication(iOSDriver);
         String expectedStatus = (String) properties.get("ios.profile.status");
         settingsTab = iOSBasePage.openSettingsTab(iOSDriver);
         String actualProfileName = settingsTab.openProfile().getProfileName();

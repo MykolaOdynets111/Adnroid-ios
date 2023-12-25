@@ -6,8 +6,7 @@ public class TestCheckProfileAndroid extends BaseMobileTest {
     @Test(enabled = true)
     public void testProfileAndroid() {
         String expectedStatus = (String) properties.get("android.profile.status");
-        pressBackButton(androidDriver);
-        androidDriver.findElementByXPath("//android.widget.TextView[@content-desc='Staging Hubnub']").click();
+        openApplication(androidDriver);
         settingsTab = androidBasePage.openSettingsTab(androidDriver);
 
         String actualProfileName = settingsTab.openProfile().getProfileName();
@@ -23,7 +22,6 @@ public class TestCheckProfileAndroid extends BaseMobileTest {
                         actualStatus, expectedStatus));
 
         settingsTab.closeProfile();
-        androidBasePage.openChatsTab(androidDriver);
         pressBackButton(androidDriver);
         softAssert.assertAll();
     }

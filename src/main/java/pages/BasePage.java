@@ -5,11 +5,14 @@ import io.appium.java_client.MobileDriver;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.testng.Assert;
 
 import java.util.List;
-import java.util.Objects;
+
+import static utillities.Utilities.isPlatformAndroid;
+import static utillities.Utilities.isPlatformIos;
 
 public class BasePage {
 
@@ -60,7 +63,7 @@ public class BasePage {
     protected void clickElemBy(MobileDriver<MobileElement> driver, By element, String elemName) {
         try {
             driver.findElement(element).click();
-        } catch (TimeoutException | NoSuchElementException e) {
+        } catch (TimeoutException | NoSuchElementException | StaleElementReferenceException e) {
             Assert.fail("Cannot click '" + elemName + "' because button is not clickable.");
         }
     }
@@ -99,13 +102,6 @@ public class BasePage {
         } catch (TimeoutException | NoSuchElementException |IndexOutOfBoundsException e) {
             Assert.fail(errorDescription(elemName));
         }
-    }
-    protected boolean isPlatformAndroid(AppiumDriver<MobileElement> driver) {
-        return Objects.requireNonNull(driver.getPlatformName()).equalsIgnoreCase("Android");
-    }
-
-    protected boolean isPlatformIos(AppiumDriver<MobileElement> driver) {
-        return Objects.requireNonNull(driver.getPlatformName()).equalsIgnoreCase("IOS");
     }
 
     private String errorDescription(String elemName){
